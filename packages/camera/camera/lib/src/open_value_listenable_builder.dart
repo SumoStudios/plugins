@@ -195,18 +195,13 @@ class _OpenValueListenableBuilderState<T>
     }
   }
 
-  Widget _widget = SizedBox();
-
   @override
   Widget build(BuildContext context) {
-    if (widget._synchronizer.hashId == widget.valueListenable.hashCode) {
-      _widget = widget.builder(context, value, widget.child);
-    } else {
-      /// CameraController has already been disposed. Unsafe to even use
-      /// the previously built widget.
-      _widget = SizedBox();
-    }
-
-    return _widget;
+    /// CameraController has already been disposed. Unsafe to even use
+    /// the previously built widget.
+    if (widget._synchronizer.hashId != widget.valueListenable.hashCode) 
+      return SizedBox();
+    
+    return  widget.builder(context, value, widget.child);
   }
 }
