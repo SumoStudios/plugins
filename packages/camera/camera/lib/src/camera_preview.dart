@@ -7,10 +7,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'open_synchronizer.dart';
+import 'open_value_listenable_builder.dart';
+
 /// A widget showing a live camera preview.
 class CameraPreview extends StatelessWidget {
+  
   /// Creates a preview widget for the given camera controller.
-  const CameraPreview(this.controller, {this.child});
+  const CameraPreview(this._synchronizer, this.controller, {this.child});
+
+  final OpenSynchronizer _synchronizer;
 
   /// The controller for the camera that the preview is shown for.
   final CameraController controller;
@@ -21,9 +27,13 @@ class CameraPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return controller.value.isInitialized
-        ? ValueListenableBuilder(
+        ? OpenValueListenableBuilder(
+            _synchronizer,
             valueListenable: controller,
             builder: (context, value, child) {
+              if (_synchronizer.hashId != controller.hashCode)
+                return SizedBox();
+
               return AspectRatio(
                 aspectRatio: _isLandscape()
                     ? controller.value.aspectRatio
